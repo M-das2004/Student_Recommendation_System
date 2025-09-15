@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aptitude Quiz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-start min-h-screen pt-12">
+
+    <!-- Header Section -->
+    <header class="text-center mb-8 px-4">
+        <h1 class="text-4xl font-bold text-[#4285F4] mb-2">EduPath Guidance Platform</h1>
+        <p class="text-lg text-gray-600">Helping students choose the right stream, course & college</p>
+    </header>
+
+    <!-- Navigation Section -->
+    <nav class="flex flex-wrap justify-center space-x-2 md:space-x-4 mb-12 px-4">
+        <button class="bg-[#4285F4] text-white font-medium py-2 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"><a href="main.html">Home</a></button>
+        <button class="bg-white text-gray-700 font-medium py-2 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"><a href="apti.html">Aptitude Quiz</a></button>
+        <button class="bg-white text-gray-700 font-medium py-2 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"><a href="career.html">Courses & Careers</a></button>
+        <button class="bg-white text-gray-700 font-medium py-2 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"><a href="Timeline.html">Timeline Tracker</a></button>
+        <button class="bg-white text-gray-700 font-medium py-2 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"><a href="near.html">Nearby Colleges</a></button>
+        <button class="bg-white text-gray-700 font-medium py-2 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"><a href="index.html">Career Compass</a></button>
+    </nav>
+
+    <!-- Main Content Card -->
+    <main class="w-full max-w-2xl px-4">
+        <div class="bg-white p-8 md:p-12 rounded-3xl shadow-xl text-center">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Aptitude Quiz</h2>
+            <p class="text-base md:text-lg text-gray-600 leading-relaxed mb-8">
+                Test your skills and discover your strengths with our short aptitude quiz.
+            </p>
+            
+            <!-- Quiz Container -->
+            <div id="quiz-container" class="text-left">
+                <!-- Questions will be dynamically injected here -->
+            </div>
+
+            <button id="submit-btn" class="mt-8 bg-[#4285F4] text-white font-semibold py-3 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:ring-opacity-50">
+                Submit Quiz
+            </button>
+
+            <!-- Results Section -->
+            <div id="results-container" class="mt-8 text-center hidden">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Quiz Results</h3>
+                <p id="score" class="text-2xl font-bold text-[#4285F4]"></p>
+                <p id="message" class="text-lg text-gray-600 mt-2"></p>
+                <div id="recommendation-container" class="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <h4 class="text-xl font-semibold text-gray-800 mb-2">Based on your results, we recommend:</h4>
+                    <p id="subject-recommendation" class="text-lg font-medium text-gray-700"></p>
+                    <p id="college-recommendation" class="text-md text-gray-600 mt-2"></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const questions = [
+            // Mathematics
+            { question: "What is the value of {d}{dx}(x^3)", options: ["3x^2", "x^2", "3x", "3x^3"], answer: "3x^2", category: "maths" },
+            { question: "If a and b are the roots of the quadratic equation x^2 - 5x + 6 = 0, what is the value of $a+b$?", options: ["5", "6", "-5", "-6"], answer: "5", category: "maths" },
+            { question: "What is the probability of rolling a 4 on a standard six-sided die?", options: ["{1}/{6}", "1", "4", "{1}/{4}"], answer: "{1}/{6}", category: "maths" },
+            { question: "What is the area of a circle with a radius of 7 cm?", options: ["22 cm^2", "49\\pi cm^2", "14\\pi cm^2", "49 cm^2"], answer: "49\\pi cm^2", category: "maths" },
+            { question: "What is the value of $\\log_{10}(100)$?", options: ["1", "10", "2", "100"], answer: "2", category: "maths" },
+
+            // Physics & Chemistry
+            { question: "Which of the following is an example of a noble gas?", options: ["Oxygen", "Helium", "Hydrogen", "Carbon"], answer: "Helium", category: "science" },
+            { question: "What is the SI unit of force?", options: ["Joule", "Watt", "Newton", "Volt"], answer: "Newton", category: "science" },
+            { question: "What is the chemical formula for sulfuric acid?", options: ["H_2SO_4", "HCl", "HNO_3", "NaOH"], answer: "H_2SO_4", category: "science" },
+            { question: "According to Ohm's law, what is the relationship between voltage (V), current (I), and resistance (R)?", options: ["V = IR", "I = VR", "R = VI", "V = I/R"], answer: "V = IR", category: "science" },
+            { question: "What is the process of a liquid turning into a gas called?", options: ["Condensation", "Sublimation", "Evaporation", "Freezing"], answer: "Evaporation", category: "science" },
+
+            // Biology
+            { question: "What is the primary function of chlorophyll in plants?", options: ["Photosynthesis", "Respiration", "Transpiration", "Growth"], answer: "Photosynthesis", category: "biology" },
+            { question: "Which of the following is not a part of the human respiratory system?", options: ["Trachea", "Lungs", "Esophagus", "Diaphragm"], answer: "Esophagus", category: "biology" },
+            { question: "What is the universal blood donor?", options: ["A+", "B-", "O-", "AB+"], answer: "O-", category: "biology" },
+            { question: "Which of these is responsible for carrying oxygen in the blood?", options: ["White Blood Cells", "Platelets", "Hemoglobin", "Plasma"], answer: "Hemoglobin", category: "biology" },
+            { question: "What is the scientific name for humans?", options: ["Homo sapiens", "Pan troglodytes", "Gorilla gorilla", "Canis lupus"], answer: "Homo sapiens", category: "biology" },
+
+            // Literature
+            { question: "Who wrote the play 'Romeo and Juliet'?", options: ["William Shakespeare", "Charles Dickens", "Jane Austen", "Mark Twain"], answer: "William Shakespeare", category: "literature" },
+            { question: "Which literary device involves a contrast between what is said and what is actually meant?", options: ["Metaphor", "Simile", "Irony", "Alliteration"], answer: "Irony", category: "literature" },
+            { question: "What is the title of the famous novel by George Orwell about a dystopian society?", options: ["Animal Farm", "1984", "Brave New World", "The Great Gatsby"], answer: "1984", category: "literature" },
+            { question: "Who is the author of the 'Harry Potter' series?", options: ["J.R.R. Tolkien", "George R.R. Martin", "J.K. Rowling", "C.S. Lewis"], answer: "J.K. Rowling", category: "literature" },
+            { question: "A brief and indirect reference to a person, place, thing, or idea of historical, cultural, literary or political significance is called a(n):", options: ["Allusion", "Hyperbole", "Oxymoron", "Personification"], answer: "Allusion", category: "literature" },
+
+            // Commerce
+            { question: "What does GDP stand for?", options: ["Gross Domestic Product", "General Development Plan", "Global Domestic Production", "Government Debt Percentage"], answer: "Gross Domestic Product", category: "commerce" },
+            { question: "In accounting, what does the acronym 'FIFO' stand for?", options: ["First-In, First-Out", "Finance-In, Finance-Out", "First-In, Final-Out", "Follow-In, Follow-Out"], answer: "First-In, First-Out", category: "commerce" },
+            { question: "Which of the following is a type of business ownership where a single person owns and runs the business?", options: ["Partnership", "Corporation", "Sole Proprietorship", "Cooperative"], answer: "Sole Proprietorship", category: "commerce" },
+            { question: "What is a market where prices are declining called?", options: ["Bull Market", "Bear Market", "Flat Market", "Recession"], answer: "Bear Market", category: "commerce" },
+            { question: "Which financial statement shows a company's revenues and expenses over a period of time?", options: ["Balance Sheet", "Cash Flow Statement", "Income Statement", "Statement of Equity"], answer: "Income Statement", category: "commerce" },
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        const submitBtn = document.getElementById('submit-btn');
+        const resultsContainer = document.getElementById('results-container');
+        const scoreElement = document.getElementById('score');
+        const messageElement = document.getElementById('message');
+        const subjectRecElement = document.getElementById('subject-recommendation');
+        const collegeRecElement = document.getElementById('college-recommendation');
+
+        function renderQuiz() {
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'mb-6';
+                questionDiv.innerHTML = `
+                    <p class="font-semibold text-gray-700 mb-2">${index + 1}. ${q.question}</p>
+                    ${q.options.map(option => `
+                        <label class="block text-gray-600 py-1 cursor-pointer">
+                            <input type="radio" name="question-${index}" value="${option}" class="mr-2">
+                            ${option}
+                        </label>
+                    `).join('')}
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+
+        function calculateScore() {
+            let totalCorrect = 0;
+            const categoryScores = {
+                'maths': 0,
+                'science': 0,
+                'biology': 0,
+                'literature': 0,
+                'commerce': 0
+            };
+
+            questions.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
+                if (selectedOption && selectedOption.value === q.answer) {
+                    totalCorrect++;
+                    categoryScores[q.category]++;
+                }
+            });
+
+            const totalQuestions = questions.length;
+            const percentage = (totalCorrect / totalQuestions) * 100;
+
+            scoreElement.textContent = `${totalCorrect} / ${totalQuestions}`;
+            
+            if (percentage > 75) {
+                messageElement.textContent = "Great job! You have a high aptitude.";
+            } else if (percentage > 50) {
+                messageElement.textContent = "Good effort! You're on the right track.";
+            } else {
+                messageElement.textContent = "Keep practicing! There is always room for improvement.";
+            }
+
+            displayRecommendation(categoryScores);
+            resultsContainer.classList.remove('hidden');
+            submitBtn.classList.add('hidden');
+        }
+
+        function displayRecommendation(scores) {
+            const categories = Object.keys(scores);
+            let highestScore = -1;
+            let bestCategory = '';
+
+            categories.forEach(category => {
+                if (scores[category] > highestScore) {
+                    highestScore = scores[category];
+                    bestCategory = category;
+                }
+            });
+
+            let subjectText = "";
+            let collegeText = "";
+
+            switch (bestCategory) {
+                case 'maths':
+                    subjectText = "Mathematics and related fields like Engineering or Computer Science";
+                    collegeText = "Consider courses like B.Tech, BCA, or B.Sc in Math at institutions like IITs, NITs, or IIITs.";
+                    break;
+                case 'science':
+                    subjectText = "Science (Physics, Chemistry)";
+                    collegeText = "Consider courses in Engineering, Applied Sciences, or Research at institutions like IITs, IISc, or various technical universities.";
+                    break;
+                case 'biology':
+                    subjectText = "Science (Biology)";
+                    collegeText = "Consider courses like MBBS, BDS, B.Sc in Biology, or B.Pharm at institutions like AIIMS, AFMC, or other top medical colleges.";
+                    break;
+                case 'literature':
+                    subjectText = "Arts & Humanities";
+                    collegeText = "Consider courses in Journalism, Law, or Mass Communication at institutions like IIMC, NLUs, or Delhi University.";
+                    break;
+                case 'commerce':
+                    subjectText = "Commerce (Accounts, Economics, Business Studies)";
+                    collegeText = "Consider B.Com, BBA, or CA at colleges like SRCC, Lady Shri Ram College, or Narsee Monjee.";
+                    break;
+                default:
+                    subjectText = "It looks like your scores are balanced across all categories. You have a lot of options!";
+                    collegeText = "Explore all streams and consider what you are most passionate about.";
+                    break;
+            }
+
+            subjectRecElement.textContent = `Your suggested 12th stream is: ${subjectText}`;
+            collegeRecElement.textContent = `Potential courses and colleges: ${collegeText}`;
+        }
+
+        submitBtn.addEventListener('click', calculateScore);
+
+        renderQuiz();
+    </script>
+</body>
+</html>

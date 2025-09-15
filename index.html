@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Compass: Student Guidance Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .container {
+            max-width: 960px;
+            margin: auto;
+            padding: 2rem;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .button-primary {
+            background-color: #6366f1;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: background-color 0.3s ease-in-out;
+        }
+        .button-primary:hover {
+            background-color: #4f46e5;
+        }
+        .button-secondary {
+            background-color: #e5e7eb;
+            color: #4b5563;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: background-color 0.3s ease-in-out;
+        }
+        .button-secondary:hover {
+            background-color: #d1d5db;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .course-card {
+            transition: transform 0.2s ease-in-out;
+        }
+        .course-card:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div id="app" class="container bg-white rounded-3xl shadow-xl p-8 md:p-12 animate-fade-in w-full">
+
+        <!-- Home Screen -->
+        <div id="home-screen" class="text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Welcome to Career Compass</h1>
+            <p class="text-gray-600 text-lg mb-8">Discover your perfect career path after 10th or 12th board exams.</p>
+            <button id="start-quiz-btn" class="button-primary text-xl px-8 py-4">Start the Quiz</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Career Interest Quiz</h2>
+            <div id="quiz-question-container" class="space-y-6">
+                <!-- Quiz questions will be dynamically injected here -->
+            </div>
+            <div class="mt-8 flex justify-between">
+                <button id="prev-btn" class="button-secondary hidden">Previous</button>
+                <button id="next-btn" class="button-primary ml-auto">Next</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="hidden">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Your Recommended Fields</h2>
+            <div id="recommended-fields" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Recommended courses will be dynamically injected here -->
+            </div>
+        </div>
+        
+        <!-- Details Screen (for Colleges & Scopes) -->
+        <div id="details-screen" class="hidden">
+            <button id="back-to-results-btn" class="button-secondary mb-6 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+                Back to Courses
+            </button>
+            <div id="details-content" class="card p-6">
+                <!-- College and scope details will be dynamically injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data structure for the quiz
+        const quizData = [
+            {
+                question: "Do you enjoy subjects like Physics, Chemistry, and Mathematics?",
+                options: [
+                    { text: "Yes, I love them.", interests: ['science-pcm', 'engineering'] },
+                    { text: "I'm more interested in Biology.", interests: ['science-pcb', 'medical'] },
+                    { text: "Not really, I prefer social sciences.", interests: ['arts'] },
+                    { text: "I am more into commerce and business.", interests: ['commerce'] }
+                ]
+            },
+            {
+                question: "What kind of activities do you find most engaging?",
+                options: [
+                    { text: "Solving puzzles and complex problems.", interests: ['engineering', 'research'] },
+                    { text: "Creating art, music, or writing stories.", interests: ['arts', 'design'] },
+                    { text: "Organizing events and managing money.", interests: ['commerce', 'management'] },
+                    { text: "Helping people and understanding the human body.", interests: ['medical', 'social-work'] }
+                ]
+            },
+            {
+                question: "Which of these subjects interests you the most?",
+                options: [
+                    { text: "Computer Science and Technology", interests: ['engineering', 'it'] },
+                    { text: "History and Literature", interests: ['arts', 'humanities'] },
+                    { text: "Accounting and Economics", interests: ['commerce', 'finance'] },
+                    { text: "Genetics and Health Sciences", interests: ['medical', 'biotechnology'] }
+                ]
+            },
+            {
+                question: "Would you prefer a career that is more...",
+                options: [
+                    { text: "Creative and expressive.", interests: ['arts', 'design'] },
+                    { text: "Technical and analytical.", interests: ['engineering', 'science-pcm'] },
+                    { text: "People-oriented and service-based.", interests: ['medical', 'social-work'] },
+                    { text: "Business-focused and managerial.", interests: ['commerce', 'management'] }
+                ]
+            }
+        ];
+
+        // Mock data for courses, colleges, and scopes
+        /*const coursesData = {
+            'engineering': {
+                name: 'Engineering',
+                description: 'A diverse field applying scientific principles to design and build machines, structures, and systems.',
+                subfields: [
+                    { id: 'cs', name: 'Computer Science', colleges: ['IIT Bombay', 'NIT Trichy'], scope: 'Software Developer, Data Scientist, AI Engineer. Jobs are high in demand globally.' },
+                    { id: 'mech', name: 'Mechanical Engineering', colleges: ['BITS Pilani', 'Delhi Technological University'], scope: 'Design Engineer, Manufacturing Manager. Jobs in automotive, aerospace, and robotics.' }
+                ]
+            },
+            'medical': {
+                name: 'Medical',
+                description: 'Focused on the study of health, disease, and the human body to treat and prevent illness.',
+                subfields: [
+                    { id: 'mbbs', name: 'MBBS (Medicine)', colleges: ['AIIMS Delhi', 'Maulana Azad Medical College'], scope: 'Doctor, Surgeon, Researcher. High respect and good earning potential.' },
+                    { id: 'dent', name: 'BDS (Dentistry)', colleges: ['Manipal College of Dental Sciences', 'Govt Dental College, Mumbai'], scope: 'Dentist, Orthodontist. Stable and respected career.' }
+                ]
+            },
+            'commerce': {
+                name: 'Commerce',
+                description: 'Deals with the study of business, trade, and financial systems.',
+                subfields: [
+                    { id: 'bcom', name: 'B.Com', colleges: ['Shri Ram College of Commerce (SRCC)', 'Lady Shri Ram College for Women'], scope: 'Accountant, Financial Analyst. Good for private and government sector jobs.' },
+                    { id: 'bba', name: 'BBA', colleges: ['IIM Indore', 'NMIMS Mumbai'], scope: 'Marketing Manager, HR Manager, Business Consultant. High demand in corporate sectors.' }
+                ]
+            },
+            'arts': {
+                name: 'Arts & Humanities',
+                description: 'A field for those who are creative, curious, and enjoy exploring human culture, history, and expression.',
+                subfields: [
+                    { id: 'ba', name: 'B.A. (Hons.)', colleges: ['St. Stephen\'s College', 'Jadavpur University'], scope: 'Journalist, Civil Servant, Educator. Excellent for preparing for competitive exams.' },
+                    { id: 'fine-arts', name: 'Fine Arts', colleges: ['College of Art, Delhi', 'MSU Baroda'], scope: 'Graphic Designer, Artist, Photographer. Good for creative industries.' }
+                ]
+            }
+        };*/
+
+        const coursesData = {
+    'engineering': {
+        name: 'Engineering',
+        description: 'Government engineering colleges in J&K offer technical programs in disciplines such as computer science, mechanical, and civil engineering.',
+        subfields: [
+            {
+                id: 'cs',
+                name: 'Computer Science Engineering',
+                colleges: ['GCET Jammu', 'SSM Srinagar'],
+                scope: 'Software Engineer, System Analyst, Government Engineering Services.'
+            },
+            {
+                id: 'civil',
+                name: 'Civil Engineering',
+                colleges: ['GCET Jammu', 'MIET Jammu'],
+                scope: 'Public Sector Engineer, Construction Manager, Site Supervisor in government and private infrastructure projects.'
+            }
+        ]
+    },
+    'medical': {
+        name: 'Medical',
+        description: 'Medical education in J&K is served by reputed government institutions with MBBS, BDS, and allied health programs.',
+        subfields: [
+            {
+                id: 'mbbs',
+                name: 'MBBS',
+                colleges: ['GMC Srinagar', 'GMC Jammu'],
+                scope: 'Government Doctor, Surgeon, Specialist in public hospitals.'
+            },
+            {
+                id: 'bds',
+                name: 'BDS',
+                colleges: ['GDC Srinagar', 'GDC Jammu'],
+                scope: 'Government Dentist, Dental Surgeon in rural and urban healthcare setups.'
+            }
+        ]
+    },
+    'commerce': {
+        name: 'Commerce',
+        description: 'Commerce colleges in J&K focus on business, accounting, and financial management.',
+        subfields: [
+            {
+                id: 'bcom',
+                name: 'B.Com',
+                colleges: ['SPMR Jammu', 'Islamia College Srinagar'],
+                scope: 'Accountant, Tax Consultant, Government Auditor.'
+            },
+            {
+                id: 'bba',
+                name: 'BBA',
+                colleges: ['SPMR Jammu', 'Islamia College Srinagar'],
+                scope: 'Management Trainee, Business Analyst, Govt Banking Sector Jobs.'
+            }
+        ]
+    },
+    'arts': {
+        name: 'Arts & Humanities',
+        description: 'J&K government colleges offer BA programs in literature, sociology, political science, and more.',
+        subfields: [
+            {
+                id: 'ba',
+                name: 'B.A.',
+                colleges: ['GGM Jammu', 'Women\'s College Srinagar'],
+                scope: 'Teacher, Civil Services, Research, Govt Librarian.'
+            },
+            {
+                id: 'fine-arts',
+                name: 'Fine Arts',
+                colleges: ['Women\'s College Srinagar'],
+                scope: 'Art Teacher, Illustrator, Designer in govt art programs.'
+            }
+        ]
+    }
+};
+
+const collegeInfo = {
+    'GCET Jammu': {
+        name: 'Government College of Engineering and Technology, Jammu',
+        city: 'Jammu',
+        fees: '₹50k–₹70k/year',
+        infrastructure: 'Govt-funded labs, campus placement, library, hostel.',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSR9eCIKxcrxvROYCeFIOZs2-vn5HDrKOtjig&s'
+    },
+    'SSM Srinagar': {
+        name: 'SSM College of Engineering, Srinagar',
+        city: 'Srinagar',
+        fees: '₹60k–₹80k/year',
+        infrastructure: 'Semi-govt, good facilities, tech labs, transport available.',
+        image: 'https://content.jdmagicbox.com/comp/baramulla/b3/9999p1953.1953.110110151724.m5b3/catalogue/ssm-college-of-engineering-pattan-baramulla-colleges-ueihjxbqgr.jpg'
+    },
+    'MIET Jammu': {
+        name: 'Model Institute of Engineering and Technology, Jammu',
+        city: 'Jammu',
+        fees: '₹70k–₹90k/year',
+        infrastructure: 'Govt-aided, innovation labs, modern classrooms.',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcKS59jKUao_f63Z_3KIIS3uuE2vdEbSUnug&s'
+    },
+    'GMC Srinagar': {
+        name: 'Government Medical College, Srinagar',
+        city: 'Srinagar',
+        fees: '₹30k–₹50k/year',
+        infrastructure: 'Govt hospital attached, top-tier in north India.',
+        image: 'https://mbbscouncil.com/wp-content/uploads/2019/03/gmc-srinagar-campus-1280x720.jpg'
+    },
+    'GMC Jammu': {
+        name: 'Government Medical College, Jammu',
+        city: 'Jammu',
+        fees: '₹30k–₹50k/year',
+        infrastructure: 'Teaching hospital, labs, experienced faculty.',
+        image: 'https://www.moksh16.com/uploads/images/MBBS%20IN%20INDIA/MBBS%20In%20Jammu%20And%20Kashmir/government-medical-college-jammu-jopg.webp'
+    },
+    'GDC Srinagar': {
+        name: 'Government Dental College, Srinagar',
+        city: 'Srinagar',
+        fees: '₹20k–₹40k/year',
+        infrastructure: 'Govt dental hospital, surgical training.',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrr2oViBjfmewf_ngh3O2hI1HnRzT8dy-qTQ&s'
+    },
+    'GDC Jammu': {
+        name: 'Government Dental College, Jammu',
+        city: 'Jammu',
+        fees: '₹20k–₹40k/year',
+        infrastructure: 'Operative dentistry labs, clinical exposure.',
+        image: 'https://lh5.googleusercontent.com/proxy/eCjJ4riQ4Wo79ECQPzX3xFTR64Gt131rMuNA7GzdpdI1K1CvljkeXIDzb_PNnkYqNpSzZB0lONl0urGVW1ZEKN8'
+    },
+    'SPMR Jammu': {
+        name: 'Government SPMR College of Commerce, Jammu',
+        city: 'Jammu',
+        fees: '₹10k–₹20k/year',
+        infrastructure: 'Govt campus, commerce labs, accounting tools.',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIRbiGWsJFvSH11Jxaoun0V406dAIH775wuA&s'
+    },
+    'Islamia College Srinagar': {
+        name: 'Islamia College of Science and Commerce, Srinagar',
+        city: 'Srinagar',
+        fees: '₹8k–₹15k/year',
+        infrastructure: 'Govt funded, heritage campus, strong academics.',
+        image: 'https://lh3.googleusercontent.com/proxy/CJ5HM9O0vQ5IaFoo_fpdJQWQkanGs04IMdssJgAomA-nw3wKJ7SYZwuamwGVCSa1tPZpQNe5cDTBLtnPhXLsD0DmQe7wckg'
+    },
+    'GGM Jammu': {
+        name: 'Govt. Gandhi Memorial Science College, Jammu',
+        city: 'Jammu',
+        fees: '₹10k–₹15k/year',
+        infrastructure: 'One of oldest govt colleges in J&K, strong faculty.',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQ80SZSR2j9wlEIU6R1ktvvTQk7AoC6V7bZg&s'
+    },
+    'Women\'s College Srinagar': {
+        name: 'Govt. Women\'s College, Srinagar',
+        city: 'Srinagar',
+        fees: '₹8k–₹12k/year',
+        infrastructure: 'Safe campus, BA & Fine Arts programs.',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4KSG-JdUheXrHtTBRlnpGcMPEd_hVdFHCew&s'
+    }
+};
+
+
+        let currentQuestionIndex = 0;
+        let interestScores = {};
+
+        const homeScreen = document.getElementById('home-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const detailsScreen = document.getElementById('details-screen');
+        const quizQuestionContainer = document.getElementById('quiz-question-container');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const recommendedFieldsContainer = document.getElementById('recommended-fields');
+        const detailsContent = document.getElementById('details-content');
+        const backToResultsBtn = document.getElementById('back-to-results-btn');
+
+        // Functions to show and hide screens
+        const showScreen = (screen) => {
+            homeScreen.classList.add('hidden');
+            quizScreen.classList.add('hidden');
+            resultsScreen.classList.add('hidden');
+            detailsScreen.classList.add('hidden');
+            screen.classList.remove('hidden');
+            screen.classList.add('animate-fade-in');
+        };
+
+        // Render the current quiz question
+        const renderQuestion = () => {
+            const question = quizData[currentQuestionIndex];
+            quizQuestionContainer.innerHTML = `
+                <div class="card p-6">
+                    <p class="text-xl font-medium text-gray-700 mb-4">${question.question}</p>
+                    <div class="space-y-4">
+                        ${question.options.map((option, index) => `
+                            <label class="block p-4 border rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
+                                <input type="radio" name="option" value="${index}" class="mr-3">
+                                <span class="text-gray-600">${option.text}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            // Update button visibility
+            prevBtn.classList.toggle('hidden', currentQuestionIndex === 0);
+            nextBtn.textContent = currentQuestionIndex === quizData.length - 1 ? 'Get Results' : 'Next';
+        };
+
+        // Handle quiz submission
+        const submitQuiz = () => {
+            const maxInterest = Object.keys(interestScores).reduce((a, b) => interestScores[a] > interestScores[b] ? a : b, '');
+            if (maxInterest) {
+                showResults(maxInterest);
+            } else {
+                alert('Please answer the questions to see your results.'); // Using alert for simplicity, but a custom modal is better
+            }
+        };
+
+        // Show results
+        const showResults = (field) => {
+            recommendedFieldsContainer.innerHTML = '';
+            const data = coursesData[field];
+            if (data) {
+                const titleElement = document.createElement('h3');
+                titleElement.className = 'text-2xl font-semibold text-gray-800 col-span-full mb-4 text-center';
+                titleElement.textContent = data.name;
+                recommendedFieldsContainer.appendChild(titleElement);
+                
+                const descElement = document.createElement('p');
+                descElement.className = 'text-gray-600 col-span-full mb-8 text-center';
+                descElement.textContent = data.description;
+                recommendedFieldsContainer.appendChild(descElement);
+
+                data.subfields.forEach(subfield => {
+                    const card = document.createElement('div');
+                    card.className = 'course-card card p-6 text-center cursor-pointer flex flex-col items-center';
+                    card.innerHTML = `
+                        <h4 class="text-xl font-semibold text-gray-800 mb-2">${subfield.name}</h4>
+                        <button class="mt-4 button-primary view-details" data-course-id="${subfield.id}">View Details</button>
+                    `;
+                    card.addEventListener('click', (e) => {
+                        const courseId = e.target.closest('.view-details')?.dataset.courseId;
+                        if (courseId) {
+                            showDetails(field, courseId);
+                        }
+                    });
+                    recommendedFieldsContainer.appendChild(card);
+                });
+            } else {
+                recommendedFieldsContainer.innerHTML = '<p class="text-center text-gray-500">No recommendations found. Please try the quiz again.</p>';
+            }
+            showScreen(resultsScreen);
+        };
+
+        // Show college and scope details
+        const showDetails = (field, subfieldId) => {
+            const course = coursesData[field].subfields.find(s => s.id === subfieldId);
+            if (!course) return;
+
+            detailsContent.innerHTML = `
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">${course.name}</h3>
+                <div class="space-y-6">
+                    <!-- Colleges -->
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-700 mb-2">Recommended Colleges</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${course.colleges.map(collegeName => {
+                                const college = collegeInfo[collegeName];
+                                return college ? `
+                                    <div class="border rounded-2xl p-4 flex flex-col items-center text-center">
+                                        <h5 class="font-bold text-lg text-gray-800 mb-2">${college.name}</h5>
+                                        <p class="text-sm text-gray-600 mb-1">Location: ${college.city}</p>
+                                        <p class="text-sm text-gray-600 mb-1">Fees: ${college.fees}</p>
+                                        <p class="text-sm text-gray-600 mb-2">Infrastructure: ${college.infrastructure}</p>
+                                        <img src="${college.image}" alt="${college.name} Campus" class="rounded-xl w-full h-auto object-cover mt-2">
+                                    </div>
+                                ` : '';
+                            }).join('')}
+                        </div>
+                    </div>
+                    <!-- Future Scope -->
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-700 mb-2">Future Scope & Career Opportunities</h4>
+                        <p class="text-gray-600">${course.scope}</p>
+                    </div>
+                </div>
+            `;
+            showScreen(detailsScreen);
+        };
+
+        // Event Listeners
+        startQuizBtn.addEventListener('click', () => {
+            showScreen(quizScreen);
+            renderQuestion();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            if (!selectedOption) {
+                // Using alert for simplicity, but a custom modal is better
+                alert('Please select an option before proceeding!');
+                return;
+            }
+
+            // Score the current question
+            const selectedIndex = parseInt(selectedOption.value);
+            const interests = quizData[currentQuestionIndex].options[selectedIndex].interests;
+            interests.forEach(interest => {
+                interestScores[interest] = (interestScores[interest] || 0) + 1;
+            });
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                renderQuestion();
+            } else {
+                submitQuiz();
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                // Note: This simple example does not un-score previous answers, which is fine for a quick demo.
+                renderQuestion();
+            }
+        });
+
+        backToResultsBtn.addEventListener('click', () => {
+            showScreen(resultsScreen);
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            showScreen(homeScreen);
+        });
+    </script>
+
+</body>
+</html>

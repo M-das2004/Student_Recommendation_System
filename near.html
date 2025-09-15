@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EduPath - Nearby Colleges</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f4f8;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-start min-h-screen pt-12">
+
+  <!-- Header -->
+  <header class="text-center mb-8 px-4">
+    <h1 class="text-4xl font-bold text-[#4285F4] mb-2">EduPath Guidance Platform</h1>
+    <p class="text-lg text-gray-600">Helping students choose the right stream, course & college</p>
+  </header>
+
+  <!-- Navigation -->
+  <nav class="flex flex-wrap justify-center space-x-2 md:space-x-4 mb-12 px-4">
+    <button class="bg-[#4285F4] text-white font-medium py-2 px-6 rounded-full shadow-lg hover:scale-105 transition-all">
+      <a href="main.html">Home</a>
+    </button>
+    <button class="bg-white text-gray-700 font-medium py-2 px-6 rounded-full shadow-md hover:scale-105 transition-all">
+      <a href="apti.html">Aptitude Quiz</a>
+    </button>
+    <button class="bg-white text-gray-700 font-medium py-2 px-6 rounded-full shadow-md hover:scale-105 transition-all">
+      <a href="career.html">Courses & Careers</a>
+    </button>
+    <button class="bg-white text-gray-700 font-medium py-2 px-6 rounded-full shadow-md hover:scale-105 transition-all">
+      <a href="Timeline.html">Timeline Tracker</a>
+    </button>
+    <button class="bg-white text-gray-700 font-medium py-2 px-6 rounded-full shadow-md hover:scale-105 transition-all">
+      <a href="near.html">Nearby Colleges</a>
+    </button>
+    <button class="bg-white text-gray-700 font-medium py-2 px-6 rounded-full shadow-md hover:scale-105 transition-all">
+      <a href="index.html">Career Compass</a>
+    </button>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="w-full max-w-3xl bg-white rounded-3xl shadow-xl p-8 md:p-10">
+    <h1 class="text-4xl font-bold text-center text-gray-800 mb-6">Find Colleges Near You</h1>
+    <p class="text-center text-gray-600 mb-8">Enter a location or use your current location to find nearby government colleges.</p>
+
+    <!-- Search Form -->
+    <div class="bg-gray-50 p-6 rounded-xl shadow-inner mb-8">
+      <form id="search-form" class="space-y-4">
+        <div>
+          <label for="location-input" class="block text-sm font-medium text-gray-700">Enter Location</label>
+          <input type="text" id="location-input" placeholder="e.g., Jammu, Srinagar..."
+                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-[#4285F4] focus:border-[#4285F4]">
+        </div>
+        <div class="flex items-center space-x-4">
+          <button type="button" id="use-location-btn"
+                  class="flex-1 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4285F4]">
+            Use Current Location
+          </button>
+          <button type="submit"
+                  class="flex-1 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#4285F4] hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4285F4]">
+            Search
+          </button>
+        </div>
+        <p id="location-status" class="text-sm text-center text-gray-500"></p>
+      </form>
+    </div>
+
+    <!-- Results Section -->
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-700 mb-4">Search Results</h2>
+      <div id="results-display" class="space-y-6">
+        <p class="text-center text-gray-500 italic mt-8">Search for colleges to see results here.</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const colleges = {
+        'GCET Jammu': {
+          name: 'Government College of Engineering and Technology, Jammu',
+          city: 'Jammu',
+          fees: '₹50k–₹70k/year',
+          infrastructure: 'Govt-funded labs, campus placement, library, hostel.',
+          image: 'https://placehold.co/600x400/006666/ffffff?text=GCET+Jammu'
+        },
+        'SSM Srinagar': {
+          name: 'SSM College of Engineering, Srinagar',
+          city: 'Srinagar',
+          fees: '₹60k–₹80k/year',
+          infrastructure: 'Semi-govt, good facilities, tech labs, transport available.',
+          image: 'https://placehold.co/600x400/0099cc/ffffff?text=SSM+Srinagar'
+        },
+        'MIET Jammu': {
+          name: 'Model Institute of Engineering and Technology, Jammu',
+          city: 'Jammu',
+          fees: '₹70k–₹90k/year',
+          infrastructure: 'Govt-aided, innovation labs, modern classrooms.',
+          image: 'https://placehold.co/600x400/9999ff/000000?text=MIET+Jammu'
+        },
+        'GMC Srinagar': {
+          name: 'Government Medical College, Srinagar',
+          city: 'Srinagar',
+          fees: '₹30k–₹50k/year',
+          infrastructure: 'Govt hospital attached, top-tier in north India.',
+          image: 'https://placehold.co/600x400/2e8b57/ffffff?text=GMC+Srinagar'
+        },
+        'GMC Jammu': {
+          name: 'Government Medical College, Jammu',
+          city: 'Jammu',
+          fees: '₹30k–₹50k/year',
+          infrastructure: 'Teaching hospital, labs, experienced faculty.',
+          image: 'https://placehold.co/600x400/228b22/ffffff?text=GMC+Jammu'
+        },
+        'GDC Srinagar': {
+          name: 'Government Dental College, Srinagar',
+          city: 'Srinagar',
+          fees: '₹20k–₹40k/year',
+          infrastructure: 'Govt dental hospital, surgical training.',
+          image: 'https://placehold.co/600x400/ff9966/000000?text=GDC+Srinagar'
+        },
+        'GDC Jammu': {
+          name: 'Government Dental College, Jammu',
+          city: 'Jammu',
+          fees: '₹20k–₹40k/year',
+          infrastructure: 'Operative dentistry labs, clinical exposure.',
+          image: 'https://placehold.co/600x400/ffcc99/000000?text=GDC+Jammu'
+        },
+        'SPMR Jammu': {
+          name: 'Government SPMR College of Commerce, Jammu',
+          city: 'Jammu',
+          fees: '₹10k–₹20k/year',
+          infrastructure: 'Govt campus, commerce labs, accounting tools.',
+          image: 'https://placehold.co/600x400/663399/ffffff?text=SPMR+Commerce+Jammu'
+        },
+        'Islamia College Srinagar': {
+          name: 'Islamia College of Science and Commerce, Srinagar',
+          city: 'Srinagar',
+          fees: '₹8k–₹15k/year',
+          infrastructure: 'Govt funded, heritage campus, strong academics.',
+          image: 'https://placehold.co/600x400/333366/ffffff?text=Islamia+College+Srinagar'
+        },
+        'GGM Jammu': {
+          name: 'Govt. Gandhi Memorial Science College, Jammu',
+          city: 'Jammu',
+          fees: '₹10k–₹15k/year',
+          infrastructure: 'One of oldest govt colleges in J&K, strong faculty.',
+          image: 'https://placehold.co/600x400/444444/ffffff?text=GGM+College+Jammu'
+        },
+        "Women's College Srinagar": {
+          name: "Govt. Women's College, Srinagar",
+          city: 'Srinagar',
+          fees: '₹8k–₹12k/year',
+          infrastructure: 'Safe campus, BA & Fine Arts programs.',
+          image: "https://placehold.co/600x400/cc6699/ffffff?text=Women's+College+Srinagar"
+        }
+      };
+
+      const searchForm = document.getElementById('search-form');
+      const locationInput = document.getElementById('location-input');
+      const useLocationBtn = document.getElementById('use-location-btn');
+      const resultsDisplay = document.getElementById('results-display');
+      const locationStatus = document.getElementById('location-status');
+
+      const renderColleges = (collegeArray) => {
+        resultsDisplay.innerHTML = '';
+        if (collegeArray.length === 0) {
+          resultsDisplay.innerHTML = '<p class="text-center text-gray-500 italic">No colleges found. Please try a different location.</p>';
+          return;
+        }
+
+        collegeArray.forEach(college => {
+          const card = document.createElement('div');
+          card.className = 'bg-white p-4 rounded-lg shadow-md border';
+          card.innerHTML = `
+            <img src="${college.image}" alt="${college.name}" class="w-full h-48 object-cover rounded-md mb-4">
+            <h3 class="text-xl font-bold text-gray-800">${college.name}</h3>
+            <p class="text-gray-600 font-medium">${college.city}</p>
+            <p class="text-sm text-gray-700 mt-2"><strong>Fees:</strong> ${college.fees}</p>
+            <p class="text-sm text-gray-700"><strong>Infrastructure:</strong> ${college.infrastructure}</p>
+          `;
+          resultsDisplay.appendChild(card);
+        });
+      };
+
+      searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const query = locationInput.value.trim().toLowerCase();
+        resultsDisplay.innerHTML = '<p class="text-center text-gray-500 italic">Searching for colleges...</p>';
+
+        setTimeout(() => {
+          const collegeList = Object.values(colleges);
+          const filtered = query
+            ? collegeList.filter(college => college.city.toLowerCase().includes(query))
+            : collegeList;
+
+          renderColleges(filtered);
+        }, 1000);
+      });
+
+      useLocationBtn.addEventListener('click', () => {
+        locationStatus.textContent = 'Fetching your location...';
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              const lat = pos.coords.latitude;
+              const lon = pos.coords.longitude;
+              locationInput.value = `Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}`;
+              locationStatus.textContent = 'Location fetched! Please enter a city manually to search.';
+            },
+            () => {
+              locationStatus.textContent = 'Error: Could not fetch location.';
+            }
+          );
+        } else {
+          locationStatus.textContent = 'Geolocation is not supported by your browser.';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
